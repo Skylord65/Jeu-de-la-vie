@@ -18,7 +18,7 @@ int regle1(int grid[MAX_GRID_CELLS_X][MAX_GRID_CELLS_Y], int x, int y) {
     int dr = (x==MAX_GRID_CELLS_X-1 && y==MAX_GRID_CELLS_Y-1)?0:grid[x+1][y+1];
     int mr = y==MAX_GRID_CELLS_Y-1?0:grid[x][y+1];
     int ur = (x==0 && y==MAX_GRID_CELLS_Y-1)?0:grid[x-1][y+1];
-    printf("%d\n", (ul+ml+dl+uc+dc+dr+mr+ur));
+    //printf("%d\n", (ul+ml+dl+uc+dc+dr+mr+ur));
 
     return self==0 && (ul+ml+dl+uc+dc+dr+mr+ur)==3;
 }
@@ -33,7 +33,7 @@ int regle2(int grid[MAX_GRID_CELLS_X][MAX_GRID_CELLS_Y], int x, int y) {
     int dr = (x==MAX_GRID_CELLS_X-1 && y==MAX_GRID_CELLS_Y-1)?0:grid[x+1][y+1];
     int mr = y==MAX_GRID_CELLS_Y-1?0:grid[x][y+1];
     int ur = (x==0 && y==MAX_GRID_CELLS_Y-1)?0:grid[x-1][y+1];
-    printf("%d\n", (ul+ml+dl+uc+dc+dr+mr+ur));
+    //printf("%d\n", (ul+ml+dl+uc+dc+dr+mr+ur));
     return self==1 && ((ul+ml+dl+uc+dc+dr+mr+ur)==2 || (ul+ml+dl+uc+dc+dr+mr+ur)==3);
 }
 
