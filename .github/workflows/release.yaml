@@ -8,25 +8,27 @@ permissions:
   contents: write
 
 env:
-  RL: "5.5"
+  RL: "5.5"   # version de raylib
 
 jobs:
   build-release:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
       - name: Installer les dépendances
         run: |
           sudo apt-get update
-          sudo apt-get install -y mingw-w64 libgl1-mesa-dev libx11-dev \
-            libxrandr-dev libxi-dev libxcursor-dev libxinerama-dev
+          sudo apt-get install -y --no-install-recommends gcc-mingw-w64-x86-64 \
+            libgl-dev libx11-dev libxrandr-dev libxi-dev libxcursor-dev libxinerama-dev
 
       - name: Télécharger raylib (Linux + Windows)
         run: |
           B=https://github.com/raysan5/raylib/releases/download/$RL
-          curl -L $B/raylib-${RL}_linux_amd64.tar.gz | tar xz
-          curl -L -o win.zip $B/raylib-${RL}_win64_mingw-w64.zip
+          curl -fL --retry 3 --max-time 120 -o linux.tar.gz $B/raylib-${RL}_linux_amd64.tar.gz
+          curl -fL --retry 3 --max-time 120 -o win.zip $B/raylib-${RL}_win64_mingw-w64.zip
+          tar xzf linux.tar.gz
           unzip -q win.zip
 
       - name: Compiler pour Linux
