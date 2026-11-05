@@ -1,0 +1,54 @@
+name: Release automatique
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+env:
+  RL: "5.5"
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer les dépendances
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mingw-w64 libgl1-mesa-dev libx11-dev \
+            libxrandr-dev libxi-dev libxcursor-dev libxinerama-dev
+
+      - name: Télécharger raylib (Linux + Windows)
+        run: |
+          B=https://github.com/raysan5/raylib/releases/download/$RL
+          curl -L $B/raylib-${RL}_linux_amd64.tar.gz | tar xz
+          curl -L -o win.zip $B/raylib-${RL}_win64_mingw-w64.zip
+          unzip -q win.zip
+
+      - name: Compiler pour Linux
+        run: |
+          D=raylib-${RL}_linux_amd64
+          gcc src/*.c -std=c11 -O2 -I$D/include -L$D/lib \
+            -lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -o game_of_life
+          tar czf jeu-de-la-vie-linux-x64.tar.gz game_of_life
+
+      - name: Compiler pour Windows
+        run: |
+          D=raylib-${RL}_win64_mingw-w64
+          x86_64-w64-mingw32-gcc src/*.c -std=c11 -O2 -I$D/include -L$D/lib \
+            -lraylib -lopengl32 -lgdi32 -lwinmm -static -o game_of_life.exe
+
+      - name: Créer le tag et la release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          name: Version 1.0.${{ github.run_number }}
+          generate_release_notes: true
+          files: |
+            game_of_life.exe
+            jeu-de-la-vie-linux-x64.tar.gz
